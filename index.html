@@ -2,27 +2,39 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Neignbor Map Service</title>
+    <link href="style/bootstrap.min.css" rel="stylesheet">
     <link href="style/style.css" rel="stylesheet">
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbC-ePyIjHbJQePaosaWn8XAb3GGWhRDI">
-    </script>
   </head>
   <body>
-    <div class="container">
-      <div id="search_bar">
-        <p class="text">Bart Locations</p>
-        <input type="text" id="places_search">
-        <input type="button" id="go_places" value="Go">
-      </div>
-      <div id="map"></div>
+    <div id="map-canvas">
     </div>
-    <script src="js/map.js"></script>
-
-    <script src="lib/knockout-3.4.2.js"></script>
-
-    <script src="js/app.js"></script>
-
-
+    <div id="search-container">
+          <div id="search-nav">
+              <input id="input" placeholder="Search…" type="input" data-bind="textInput: query, valueUpdate: 'keydown'" autocomplete="off"></input>
+              <div id="scroller">
+                  <ul data-bind="template: {name: 'marker', foreach:markers}">
+                  </ul>
+                  <script type="text/html" id="marker">
+                      <div data-bind="visible: visible">
+                          <a href="#" data-bind="attr: {id: id}">
+                            <li>
+                                <strong data-bind="text: title"></strong>
+                                <p data-bind="text: streetAddress"></p>
+                                <p data-bind="text: cityAddress"></p>
+                            </li>
+                        </a>
+                    </div>
+                </script>
+            </div>
+        </div>
+      </div>
+      <script async defer
+            src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry&key=AIzaSyDbC-ePyIjHbJQePaosaWn8XAb3GGWhRDI&callback=initMap">
+      </script>
+      <script src="lib/jquery-3.2.1.min.js"></script>
+      <script src="lib/knockout-3.4.2.js"></script>
+      <script src="js/app.js"></script>
   </body>
 </html>

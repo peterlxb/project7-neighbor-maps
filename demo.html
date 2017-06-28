@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Neignbor Map Service</title>
+    <!-- <link href="style/style.css" rel="stylesheet"> -->
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #street-view {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="street-view"></div>
+    <script>
+      var panorama;
+      //{lat: 35.036647,lng: 135.735907}
+      //{lat: 35.036185, lng: 135.737237}
+      function initMap() {
+        panorama = new google.maps.StreetViewPanorama(
+            document.getElementById('street-view'),
+            {
+              position: {lat: 25.045162,lng:121.505572 },
+              pov: {heading: 165, pitch: 0},
+              zoom: 1
+            });
+      }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?&key=AIzaSyDbC-ePyIjHbJQePaosaWn8XAb3GGWhRDI&callback=initMap">
+    </script>
+    <!-- <script src="js/map.js"></script> -->
+    <!-- <script src="lib/knockout-3.4.2.js"></script> -->
+    <!-- <script src="js/app.js"></script> -->
+  </body>
+</html>
