@@ -70,3 +70,4 @@ Types: street_address
 model
 view-googlemap
 vm-viewmodel ko
+//update win10
