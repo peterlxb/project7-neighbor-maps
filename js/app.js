@@ -10,12 +10,12 @@
         mapTypeControl: false,
         disableDefaultUI: true
     };
-    if($(window).width() <= 1080) {
-        mapOptions.zoom = 13;
-    }
-    if ($(window).width() < 850 || $(window).height() < 595) {
-        hideNav();
-    }
+    // if($(window).width() <= 1080) {
+    //     mapOptions.zoom = 13;
+    // }
+    // if ($(window).width() < 850 || $(window).height() < 595) {
+    //     hideNav();
+    // }
 
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
@@ -156,13 +156,13 @@
                           markers[i].lat + ',' + markers[i].lng +
                           '&fov=75&heading=' + headingImageView[i] + '&pitch=10';
                         }
-                      }
+        }
 
 
     //Sets the markers on the map within the initialize function
     //Sets the infoWindows to each individual marker
     //The markers are inidividually set using a for loop
-function setMarkers(location) {
+    function setMarkers(location) {
 
     for(i=0; i<location.length; i++) {
         // create marker attr holdMarker
@@ -188,7 +188,7 @@ function setMarkers(location) {
         //Binds infoWindow content to each marker
         location[i].contentString = '<img src="' + streetViewImage +
                                   '" alt="Street View Image of ' + location[i].title + '"><br><hr style="margin-bottom: 5px"><strong>' +
-                                   location[i].title + '</strong><br><p>' +
+                                   location[i].title + '</strong><div id="pano"></div><br><p>' +
                                     location[i].streetAddress + '<br>' +
                                     location[i].cityAddress + '<br></p><a class="web-links" href="http://' + location[i].url +
                                     '" target="_blank">' + location[i].url + '</a>';
@@ -203,6 +203,16 @@ function setMarkers(location) {
         new google.maps.event.addListener(location[i].holdMarker, 'click', (function(marker, i) {
           return function() {
             infowindow.setContent(location[i].contentString);
+            var address = {lat:location[i].lat, lng:location[i].lng};
+            var panoramaOptions = {
+              position: address,
+              pov: {heading: 65, pitch: 0},
+              zoom:15
+            };
+
+            var panorama = new google.maps.StreetViewPanorama(
+              document.getElementById('pano'), panoramaOptions);
+
             infowindow.open(map,this);
             var windowWidth = $(window).width();
             if(windowWidth <= 1080) {
@@ -221,6 +231,15 @@ function setMarkers(location) {
         searchNav.click((function(marker, i) {
           return function() {
             infowindow.setContent(location[i].contentString);
+            var address = {lat:location[i].lat, lng:location[i].lng};
+            var panoramaOptions = {
+              position: address,
+              pov: {heading: 65, pitch: 0},
+              zoom:15
+            };
+
+            var panorama = new google.maps.StreetViewPanorama(
+              document.getElementById('pano'), panoramaOptions);
             infowindow.open(map,marker);
             map.setZoom(16);
             map.setCenter(marker.getPosition());
@@ -238,8 +257,10 @@ function setMarkers(location) {
 
     viewModel.markers = ko.dependentObservable(function() {
       var self = this;
+      //search 为输入框中的search value
       var search = self.query().toLowerCase();
       return ko.utils.arrayFilter(markers, function(marker) {
+        //如果有匹配的就返回那个marker
         if (marker.title.toLowerCase().indexOf(search) >= 0) {
             marker.boolTest = true;
             return marker.visible(true);

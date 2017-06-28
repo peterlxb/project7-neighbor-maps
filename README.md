@@ -65,3 +65,8 @@ museum Museum of Contemporary Art Taipei{
 Location: 25.050725,121.518975 (type: ROOFTOP)
 Types: street_address
 }
+
+//MVVM
+model
+view-googlemap
+vm-viewmodel ko
