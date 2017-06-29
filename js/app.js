@@ -2,6 +2,14 @@
   var map;
   var markersArray = [];
 
+  function loadScript() {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://maps.googleapis.com/maps/api/js?js?libraries=places,geometry&key=AIzaSyDbC-ePyIjHbJQePaosaWn8XAb3GGWhRDI' +
+      '&&callback=initMap';
+  document.body.appendChild(script);
+}
+window.onload = loadScript;
   //Initialize the map and its contents
   function initMap() {
     var mapOptions = {
@@ -35,6 +43,7 @@
       }
     }
   }
+
 
   //Information about the different locations
   //Provides information for the markers
