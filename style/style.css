@@ -50,7 +50,3 @@ html, body, #map-canvas {
     overflow: scroll;
     margin: 0 5px;
 }
-#pano {
-  width: 200px;
-  height: 200px;
-}

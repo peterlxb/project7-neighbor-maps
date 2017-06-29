@@ -6,7 +6,7 @@
   function initMap() {
     var mapOptions = {
         zoom: 14,
-        center: new google.maps.LatLng(38.896952, -77.029713),
+        center: new google.maps.LatLng(25.037394,121.5166),
         mapTypeControl: false,
         disableDefaultUI: true
     };
@@ -40,99 +40,99 @@
   //Provides information for the markers
   var markers = [
       {
-      title: "The Thomas Jefferson Memorial",
-      lat: 38.881004,
-      lng: -77.036463,
-      streetAddress: "701 East Basin SW",
-      cityAddress: "Washington, DC 20242",
+      title: "Evergreen Maritime Museum",
+      lat: 25.038611,
+      lng: 121.518889,
+      streetAddress: "Zhongzheng District, ",
+      cityAddress: "Taipei City, Taiwan 100",
       url: "www.nps.gov/thje/index.htm",
       id: "nav0",
       visible: ko.observable(true),
       boolTest: true
       },
       {
-      title: "The Lincoln Memorial",
-      lat: 38.889269,
-      lng: -77.050176,
-      streetAddress: "2 Lincoln Memorial Cir",
-      cityAddress: "Washington, DC 20037",
+      title: "The Peace Park",
+      lat: 25.040363,
+      lng: 121.515469,
+      streetAddress: "No. 3, Ketagalan Blvd, Zhongzheng District,",
+      cityAddress: "Taipei City, Taiwan 100",
       url: "www.nps.gov/linc/index.htm",
       id: "nav1",
       visible: ko.observable(true),
       boolTest: true
       },
       {
-      title: "The Washington Monument",
-      lat: 38.889484,
-      lng: -77.0363733,
-      streetAddress: "2 15th St NW",
-      cityAddress: "Washington, DC 20007",
+      title: "The Taiwan Museum",
+      lat: 25.038234,
+      lng: 121.519291,
+      streetAddress: "No. 1, Section 1, Xinyi Road",
+      cityAddress: "Zhongzheng District, Taipei City, Taiwan 100",
       url: "www.nps.gov/wamo/index.htm",
       id: "nav2",
       visible: ko.observable(true),
       boolTest: true
       },
       {
-      title: "The United States Capital",
-      lat: 38.889939,
-      lng: -77.00905,
-      streetAddress: "East Capitol St NE & First St SE",
-      cityAddress: "Washington, DC 20004",
+      title: "Melange Café",
+      lat: 25.049061,
+      lng: 121.517478,
+      streetAddress: "No. 23, Lane 16, Section 2, Zhongshan North Road,",
+      cityAddress: " Zhongshan District, Taipei City, Taiwan 10491 ",
       url: "www.visitthecapitol.gov",
       id: "nav3",
       visible: ko.observable(true),
       boolTest: true
       },
       {
-      title: "The White House",
-      lat: 38.8989013,
-      lng: -77.0324048,
-      streetAddress: "1600 Pennsylvania Ave NW SW",
-      cityAddress: "Washington, DC 20500",
+      title: "starbucks",
+      lat: 25.045162,
+      lng: 121.505572,
+      streetAddress: "No. 77, Section 2, Wuchang St, ",
+      cityAddress: "Wanhua District, Taipei City, Taiwan 108",
       url: "www.whitehouse.gov",
       id: "nav4",
       visible: ko.observable(true),
       boolTest: true
       },
       {
-      title: "The National WWII Memorial",
-      lat: 38.889443,
-      lng: -77.040556,
-      streetAddress: "1750 Independence Ave SW",
-      cityAddress: "Washington, DC 20006",
+      title: "Taipei Cinema Park",
+      lat: 25.044722,
+      lng: 121.503137,
+      streetAddress: "No. 19, Kangding Road,",
+      cityAddress: " Wanhua District, Taipei City, Taiwan 108",
       url: "www.wwiimemorial.com/",
       id: "nav5",
       visible: ko.observable(true),
       boolTest: true
       },
       {
-      title: "National Gallery of Art",
-      lat: 38.890575,
-      lng: -77.019764,
-      streetAddress: "6th & Constitution Ave NW",
-      cityAddress: "Washington, DC 20565",
+      title: "hotel",
+      lat: 25.046775,
+      lng: 121.505803 ,
+      streetAddress: "No. 46, Kunming Street",
+      cityAddress: " Wanhua District, Taipei City, Taiwan 108",
       url: "www.nga.gov/content/ngaweb.html",
       id: "nav6",
       visible: ko.observable(true),
       boolTest: true
       },
       {
-      title: "Smithsonian National Museum of Natural History",
-      lat: 38.890505,
-      lng: -77.026031,
-      streetAddress: "10th St. & Constitution Ave. NW",
-      cityAddress: "Washington, DC 20560",
+      title: "hotel",
+      lat: 25.042763,
+      lng: 121.509436,
+      streetAddress: "No. 4, Xiushan Street, ",
+      cityAddress: "Zhongzheng District, Taipei City, Taiwan 100",
       url: "www.mnh.si.edu",
       id: "nav7",
       visible: ko.observable(true),
       boolTest: true
       },
       {
-      title: "Arts and Industries Building",
-      lat: 38.888771,
-      lng: -77.024374,
-      streetAddress: "900 Jefferson Dr SW",
-      cityAddress: "Washington, DC 20560",
+      title: "pizza ",
+      lat: 25.049061,
+      lng: 121.517478,
+      streetAddress: "103, Taiwan, Taipei City,,",
+      cityAddress: " Datong District, Section 1, Chengde Road",
       url: "www.si.edu/Museums/arts-and-industries-building",
       id: "nav8",
       visible: ko.observable(true),
@@ -159,6 +159,7 @@
         }
 
 
+
     //Sets the markers on the map within the initialize function
     //Sets the infoWindows to each individual marker
     //The markers are inidividually set using a for loop
@@ -171,7 +172,7 @@
           map: map,
           title: location[i].title,
           icon: {
-            url: 'marker.png',
+            url: 'img/marker.png',
             size: new google.maps.Size(25, 40),
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(12.5, 40)
@@ -182,13 +183,16 @@
           }
         });
 
+        //test
+        //API Keys
+
         //function to place google street view images within info windows
         determineImage();
 
         //Binds infoWindow content to each marker
         location[i].contentString = '<img src="' + streetViewImage +
                                   '" alt="Street View Image of ' + location[i].title + '"><br><hr style="margin-bottom: 5px"><strong>' +
-                                   location[i].title + '</strong><div id="pano"></div><br><p>' +
+                                   location[i].title + '</strong><p>' +
                                     location[i].streetAddress + '<br>' +
                                     location[i].cityAddress + '<br></p><a class="web-links" href="http://' + location[i].url +
                                     '" target="_blank">' + location[i].url + '</a>';
@@ -204,14 +208,14 @@
           return function() {
             infowindow.setContent(location[i].contentString);
             var address = {lat:location[i].lat, lng:location[i].lng};
-            var panoramaOptions = {
-              position: address,
-              pov: {heading: 65, pitch: 0},
-              zoom:15
-            };
+            // var panoramaOptions = {
+            //   position: address,
+            //   pov: {heading: 65, pitch: 0},
+            //   zoom:15
+            // };
 
-            var panorama = new google.maps.StreetViewPanorama(
-              document.getElementById('pano'), panoramaOptions);
+            // var panorama = new google.maps.StreetViewPanorama(
+            //   document.getElementById('pano'), panoramaOptions);
 
             infowindow.open(map,this);
             var windowWidth = $(window).width();
@@ -231,15 +235,15 @@
         searchNav.click((function(marker, i) {
           return function() {
             infowindow.setContent(location[i].contentString);
-            var address = {lat:location[i].lat, lng:location[i].lng};
-            var panoramaOptions = {
-              position: address,
-              pov: {heading: 65, pitch: 0},
-              zoom:15
-            };
+            // var address = {lat:location[i].lat, lng:location[i].lng};
+            // var panoramaOptions = {
+            //   position: address,
+            //   pov: {heading: 65, pitch: 0},
+            //   zoom:15
+            // };
 
-            var panorama = new google.maps.StreetViewPanorama(
-              document.getElementById('pano'), panoramaOptions);
+            // var panorama = new google.maps.StreetViewPanorama(
+            //   document.getElementById('pano'), panoramaOptions);
             infowindow.open(map,marker);
             map.setZoom(16);
             map.setCenter(marker.getPosition());
