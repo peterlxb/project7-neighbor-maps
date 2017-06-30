@@ -8,16 +8,16 @@
     <link href="style/style.css" rel="stylesheet">
   </head>
   <body>
-    <div id="map-canvas">
+    <!-- <div id="map-canvas">
     </div>
     <div id="search-container">
-          <div id="search-nav">
-              <input id="input" placeholder="Search…" type="input" data-bind="textInput: query, valueUpdate: 'keydown'" autocomplete="off"></input>
+          <div id="search-nav" class="hide" data-bind="css: { hide: hideNav }">
+              <input id="input" placeholder="Search…" type="input" data-bind="textInput: searchTerm"></input>
               <div id="scroller">
                   <ul data-bind="template: {name: 'marker', foreach:markers}">
                   </ul>
                   <script type="text/html" id="marker">
-                      <div data-bind="visible: visible">
+                      <div data-bind="active: active">
                           <a href="#" data-bind="attr: {id: id}">
                             <li>
                                 <strong data-bind="text: title"></strong>
@@ -29,13 +29,29 @@
                 </script>
             </div>
         </div>
-      </div>
-      <!-- <script async defer
-            src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry&key=AIzaSyDbC-ePyIjHbJQePaosaWn8XAb3GGWhRDI&callback=initMap">
-      </script> -->
+      </div> -->
+
+      <div id="wrapper" class="hide" data-bind="css: { hide: mapNotLoaded }">
+        <div id="nav" class="hide" data-bind="css: { hide: hideNav }">
+            <input id="filter" class="filter" type="text" data-bind="textInput: searchTerm" placeholder="Search locations by name...">
+            <ul>
+                <!-- ko foreach: filteredLocations -->
+                    <li data-bind="text: name, css: { active: active }, click: selectLocation"></li>
+                <!-- /ko -->
+                <li data-bind="visible: filteredLocations().length == 0" style="cursor:auto;">No Results</li>
+            </ul>
+        </div>
+        <div id="map-container">
+            <div id="map"></div>
+            <button class="toggle-nav" data-bind="click: toggleNav">Menu</button>
+        </div>
+    </div>
+
       <script src="lib/jquery-3.2.1.min.js"></script>
       <script src="lib/knockout-3.4.2.js"></script>
       <script src="js/app.js"></script>
-
+      <script async defer
+            src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry&key=AIzaSyDbC-ePyIjHbJQePaosaWn8XAb3GGWhRDI&callback=app" onerror="googleError();">
+      </script>
   </body>
 </html>
