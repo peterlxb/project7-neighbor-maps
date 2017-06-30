@@ -36,7 +36,7 @@
             <input id="filter" class="filter" type="text" data-bind="textInput: searchTerm" placeholder="Search locations by name...">
             <ul>
                 <!-- ko foreach: filteredLocations -->
-                    <li data-bind="text: name, css: { active: active }, click: selectLocation"></li>
+                    <li data-bind="text: title, css: { active: active }, click: selectLocation"></li>
                 <!-- /ko -->
                 <li data-bind="visible: filteredLocations().length == 0" style="cursor:auto;">No Results</li>
             </ul>

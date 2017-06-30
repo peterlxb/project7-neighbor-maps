@@ -4,86 +4,71 @@
 
   var locations = [
       {
-      title: "Evergreen Maritime Museum",
+      title: "taipei",
       lat: 25.038611,
       lng: 121.518889,
-      streetAddress: "Zhongzheng District, ",
+      streetAddress: "No. 3, Ketagalan Blvd, Zhongzheng District ",
       cityAddress: "Taipei City, Taiwan 100"
       },
       {
-      title: "The Peace Park",
+      title: "taipei",
       lat: 25.040363,
       lng: 121.515469,
       streetAddress: "No. 3, Ketagalan Blvd, Zhongzheng District,",
       cityAddress: "Taipei City, Taiwan 100"
       },
       {
-      title: "The Taiwan Museum",
+      title: "taipei",
       lat: 25.038234,
       lng: 121.519291,
       streetAddress: "No. 1, Section 1, Xinyi Road",
       cityAddress: "Zhongzheng District, Taipei City, Taiwan 100"
       },
       {
-      title: "Melange Café",
+      title: "taipei",
       lat: 25.049061,
       lng: 121.517478,
       streetAddress: "No. 23, Lane 16, Section 2, Zhongshan North Road,",
       cityAddress: " Zhongshan District, Taipei City, Taiwan 10491 "
       },
       {
-      title: "starbucks",
+      title: "taipei",
       lat: 25.045162,
       lng: 121.505572,
       streetAddress: "No. 77, Section 2, Wuchang St, ",
       cityAddress: "Wanhua District, Taipei City, Taiwan 108"
       },
       {
-      title: "Taipei Cinema Park",
+      title: "Taipei",
       lat: 25.044722,
       lng: 121.503137,
       streetAddress: "No. 19, Kangding Road,",
       cityAddress: " Wanhua District, Taipei City, Taiwan 108"
       },
       {
-      title: "hotel",
-      lat: 25.046775,
-      lng: 121.505803 ,
-      streetAddress: "No. 46, Kunming Street",
-      cityAddress: " Wanhua District, Taipei City, Taiwan 108"
-      },
-      {
-      title: "hotel",
+      title: "taipei",
       lat: 25.042763,
       lng: 121.509436,
       streetAddress: "No. 4, Xiushan Street, ",
       cityAddress: "Zhongzheng District, Taipei City, Taiwan 100"
       },
       {
-      title: "pizza ",
+      title: "taipei",
       lat: 25.049061,
       lng: 121.517478,
-      streetAddress: "103, Taiwan, Taipei City,,",
+      streetAddress: "103, Taiwan, Taipei City",
       cityAddress: " Datong District, Section 1, Chengde Road"
       }
     ];
 
-  // function loadScript() {
-  // var script = document.createElement('script');
-  // script.type = 'text/javascript';
-  // script.src = 'https://maps.googleapis.com/maps/api/js?js?libraries=places,geometry&key=AIzaSyDbC-ePyIjHbJQePaosaWn8XAb3GGWhRDI' +
-  //     '&&callback=initMap' ;
-  // script.onerror = googleError();
-  // document.body.appendChild(script);
-  // }
-  // window.onload = loadScript;
-  //Initialize the map and its contents
 
   var Location = function(location){
       var self = this;
       self.title = ko.observable(location.title);
       self.lat = ko.observable(location.lat);
       self.lng = ko.observable(location.lng);
+      self.streetAddress = ko.observable(location.streetAddress);
+      self.cityAddress = ko.observable(location.cityAddress);
       self.active = ko.observable(false);
 
       // ajax callback
@@ -92,19 +77,22 @@
           return self.content;
         }
 
-      var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + self.title() + '&format=json&callback=wikiCallback';
+      var wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + self.title() + '&format=json&callback=wikiCallback';
 
       $.ajax({
         url: wikiUrl,
         dataType: 'jsonp',
+        jsonp: 'callback'
       })
       .done(function(response){
+        var articleList = response[1];
+        console.log(articleList);
         var wikiContent = '';
         if(response){
           if(typeof response[1] !== 'undefined' && typeof response[3] !== 'undefined'){
             for(var i = 0;i < 3;i++){
               if(typeof response[1][i] !== 'undefined' && response[3][i] !== 'undefined'){
-                wikiContent += '<a href=">' + response[3][i] + '" target"_blank"' + response[1][i] + '</a><br>'
+                wikiContent += '<a href="https://en.wikipedia.org/wiki/>' + response[1][i] + '" target"_blank"'  + '</a><br>'
               }
             }
           }
@@ -133,7 +121,7 @@
         map.bounds.extend(self.marker.position);
         // add click event listener to marker
         self.marker.addListener('click',function(){
-          //selectLocation(self);
+          selectLocation(self);
         })
 
       })();
@@ -147,13 +135,13 @@
         mapTypeControl: false,
         disableDefaultUI: true
     };
-    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
     map.bounds = new google.maps.LatLngBounds();
     //infoWindow
     infoWindow = new google.maps.InfoWindow({
       content:''
-    })
+    });
 
     google.maps.event.addListener(infoWindow, 'closeclick', function(){
         resetActiveState();
@@ -179,6 +167,7 @@
     // fit map to new bounds
     map.fitBounds(map.bounds);
 
+    //set currentLocation
     this.currentLocation = ko.observable(locationsList()[0]);
 
     // initialize searchTerm which is used to filter the list of locations displayed
@@ -188,17 +177,17 @@
     this.resetActiveState = function() {
         self.currentLocation().active(false);
         self.currentLocation().marker.setAnimation(null);
-        infowindow.close();
+        infoWindow.close();
     };
 
-    this.filterLocation = ko.computed(function(){
+    this.filteredLocations = ko.computed(function(){
       //reset active marker
       resetActiveState();
 
       return self.locationsList().filter(function(location){
         var display = true;
         if(self.searchTerm() !== ''){
-          if(location().title().toLowerCase().index(self.searchTerm().toLowerCase()) !== -1){
+          if(location.title().toLowerCase().indexOf(self.searchTerm().toLowerCase()) !== -1){
             display= true;
           } else {
             display = false;
@@ -210,8 +199,8 @@
     });
 
     // click handler for when a location is clicked
-    this.selectLocation = function(clickedlocation){
-      if(self.currentLocation() = clickedlocation && self.currentLocation().active == true){
+    this.selectLocation = function(clickedLocation){
+      if(self.currentLocation() == clickedLocation && self.currentLocation().active === true){
         resetActiveState();
         return;
       };
@@ -227,14 +216,15 @@
       // bounce marker
       self.currentLocation().marker.setAnimation(google.maps.Animation.BOUNCE);
 
-      // open infoWindow for the current location
-      infoWindow.setContent('<h1>' + self.currentLocation().title() + '</h1>' + self.currentLocation.getContent(function(l){
-        if(self.currentLocation() == l){
-          infoWindow.setContent('<h1>' + self.currentLocation().name() + '</h1>' + l.content())
-        }
-      }));
-
-      infoWindow.open(map, self.currentLocation().marker);
+      infoWindow.setContent('<h1>' + self.currentLocation().title() + '</h1>' + self.currentLocation().getContent(function(l){
+             // This is a call back function passed to Location.getContent()
+             // When Location has finished getting info from external API it will call this function
+             // check if infoWindow is still open for the location calling this call back function
+            if (self.currentLocation() == l){
+                 infoWindow.setContent('<h1>' + self.currentLocation().title() + '</h1>' + l.content());
+             }
+         }));
+         infoWindow.open(map, self.currentLocation().marker);
 
       // center map on current marker
       map.panTo(self.currentLocation().marker.position);
@@ -242,6 +232,7 @@
     };
     // hide nav initially on mobile
     this.hideNav = ko.observable( window.innerWidth < 640 );
+
     this.toggleNav = function() {
       self.hideNav(! self.hideNav());
       google.maps.event.trigger(map, 'resize');
@@ -262,49 +253,3 @@ function googleError(){
     console.log('Error: Google maps API has not loaded');
     $('body').prepend('<p id="map-error">Sorry we are having trouble loading google maps API, please try again in a moment.</p>');
 };
-
-
-
-
-
-
-
-
-
-function getFouSquare(data) {
-  var CLIENT_ID = 'TT0MKMIFGVNZT0J2VJL3C4PIDKUX15G5VQGEHL3UFP4AQ5JA';
-  var CLIENT_SECRET = 'WD1PN1IS2JQDYYXITIWWPCZLKVBR1EJHMXOMYUTKFUFQC54N';
-
-  $.ajax({
-      type: "GET",
-      dataType: 'json',
-      cache: false,
-      url: 'https://api.foursquare.com/v2/venues/explore?',
-      data: 'limit=3&ll=' + data + '&radius=5000&venuePhotos=1&client_id=' + CLIENT_ID + '&client_secret=' + CLIENT_SECRET + '&v=20160608&m=foursquare',
-      async: true
-    })
-      .done(function (response) {
-        var responseArr = response.response.groups[0].items;
-
-        for (var i = 0; i < responseArr.length; i++) {
-
-          var resArr = responseArr[i];
-          var fsphotosArr;
-
-          //self.fstitle(resArr.venue.name);
-          //self.fscontent(resArr.tips[0].text ? resArr.tips[0].text : "No tips here!");
-          fsphotosArr  = resArr.venue.photos.groups[0].items[0];
-          fsphotoURL = fsphotosArr.prefix + '100x100' + fsphotosArr.suffix;
-          //self.fsurl(resArr.tips[0].canonicalUrl);
-
-        }
-
-      })
-      .fail(function (response) {
-        //callback function if error - an alert will be activated to notify the user of the error
-        var foursquareDisplay =
-          '<p>Bummer!... Could not load data from Foursquare! Make sure you are connected to the Internet, or try again later.</p>';
-
-        //foursquareElem.append(foursquareDisplay);
-      });
-  }

@@ -39,7 +39,7 @@ body {
     display: block;
     width: 100%;
     margin: 0;
-    padding: 0 1rem;
+    padding:0  1rem ;
     height: 2rem;
     line-height: 2rem;
     font-size: 1rem;
@@ -64,7 +64,7 @@ body {
     position: absolute;
     z-index: 999;
     top: 0.5rem;
-    right: 0.5rem;
+    left: 0.5rem;
     padding: 0.5rem;
 }
 
