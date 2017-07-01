@@ -4,56 +4,49 @@
 
   var locations = [
       {
-      title: "taipei",
+      title: "National Taiwan Museum",
       lat: 25.038611,
       lng: 121.518889,
       streetAddress: "No. 3, Ketagalan Blvd, Zhongzheng District ",
       cityAddress: "Taipei City, Taiwan 100"
       },
       {
-      title: "taipei",
+      title: "Peace Park",
       lat: 25.040363,
       lng: 121.515469,
       streetAddress: "No. 3, Ketagalan Blvd, Zhongzheng District,",
       cityAddress: "Taipei City, Taiwan 100"
       },
       {
-      title: "taipei",
+      title: "National Central Library",
       lat: 25.038234,
       lng: 121.519291,
       streetAddress: "No. 1, Section 1, Xinyi Road",
       cityAddress: "Zhongzheng District, Taipei City, Taiwan 100"
       },
       {
-      title: "taipei",
+      title: "Red House",
       lat: 25.049061,
       lng: 121.517478,
       streetAddress: "No. 23, Lane 16, Section 2, Zhongshan North Road,",
       cityAddress: " Zhongshan District, Taipei City, Taiwan 10491 "
       },
       {
-      title: "taipei",
-      lat: 25.045162,
-      lng: 121.505572,
-      streetAddress: "No. 77, Section 2, Wuchang St, ",
-      cityAddress: "Wanhua District, Taipei City, Taiwan 108"
-      },
-      {
-      title: "Taipei",
+      title: "Q Square",
       lat: 25.044722,
       lng: 121.503137,
       streetAddress: "No. 19, Kangding Road,",
       cityAddress: " Wanhua District, Taipei City, Taiwan 108"
       },
       {
-      title: "taipei",
+      title: "Taipei Zhongshan Hall ",
       lat: 25.042763,
       lng: 121.509436,
       streetAddress: "No. 4, Xiushan Street, ",
       cityAddress: "Zhongzheng District, Taipei City, Taiwan 100"
       },
       {
-      title: "taipei",
+      title: "Museum of Contemporary Art Taipei",
       lat: 25.049061,
       lng: 121.517478,
       streetAddress: "103, Taiwan, Taipei City",
@@ -77,55 +70,60 @@
           return self.content;
         }
 
-      var wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + self.title() + '&format=json&callback=wikiCallback';
+        var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + self.title() + '&format=json&callback=wikiCallback';
 
-      $.ajax({
-        url: wikiUrl,
-        dataType: 'jsonp',
-        jsonp: 'callback'
-      })
-      .done(function(response){
-        var articleList = response[1];
-        console.log(articleList);
-        var wikiContent = '';
-        if(response){
-          if(typeof response[1] !== 'undefined' && typeof response[3] !== 'undefined'){
-            for(var i = 0;i < 3;i++){
-              if(typeof response[1][i] !== 'undefined' && response[3][i] !== 'undefined'){
-                wikiContent += '<a href="https://en.wikipedia.org/wiki/>' + response[1][i] + '" target"_blank"'  + '</a><br>'
-              }
+        $.ajax({
+          url: wikiUrl,
+          dataType: 'jsonp',
+          jsonp: 'callback'
+        })
+        .done(function(response){
+          var wikiContent = '';
+          if(response){
+              if (typeof response[1] !=="undefined" && typeof response[3] !=="undefined"){
+                    for (var i = 0; i < 3; i++) {
+                        if (typeof response[1][i] !=="undefined" && typeof response[3][i] !=="undefined"){
+                            wikiContent += '<a href="' + response[3][i] + '" target"_blank">' + response[1][i] + '</a><br>';
+                        }
+                    }
+                }
             }
-          }
-        }
-        if(wikiContent != ''){
-          self.content = ko.observable('<h4>Wikipedia results for "' + self.title() + '"</h4><p>' + wikiContent + '</p>');
-        } else {
+            //console.log(wikiContent);
+            if(wikiContent != ''){
+              self.content = ko.observable('<h4>Wikipedia results for "' + self.title() + '"</h4><p>' + wikiContent + '</p>');
+            } else {
+              self.content = ko.observable('<h4>Wikipedia results for "' + self.title() + '"</h4><p>There was a problem reaching wikipedia</p>');
+            }
+          })
+          .fail(function() {
+          console.log("There is a error when call wiki api");
           self.content = ko.observable('<h4>Wikipedia results for "' + self.title() + '"</h4><p>There was a problem reaching wikipedia</p>');
+          })
+          .always(function() {
+            if (typeof callback !== "undefined"){
+                callback(self);
+            }
+          });
+          // return a spinner for while the external API is still loading
+          return '<h4>Wikipedia results for "' + self.title() + '"</h4><p><span class="spinner"></span></p>';
         }
-      })
-      .fail(function() {
-        console.log("There is a error when call wiki api");
-        self.content = ko.observable('<h4>Wikipedia results for "' + self.title() + '"</h4><p>There was a problem reaching wikipedia</p>');
-      })
-      // return a spinner for while the external API is still loading
-      return '<h4>Wikipedia results for "' + self.title() + '"</h4><p><span class="spinner"></span></p>';
-      }
 
       self.createMarker = (function(){
+        //create marker
         self.marker = new google.maps.Marker({
           position: {lat:self.lat(), lng: self.lng()},
           map:map,
           title: self.title()
-        })
+        });
 
         map.bounds.extend(self.marker.position);
         // add click event listener to marker
         self.marker.addListener('click',function(){
           selectLocation(self);
-        })
+        });
 
       })();
-}
+};
 
   //define Google map
   function initMap() {
@@ -159,21 +157,22 @@
     self = this;
     // show ui if map loaded properly
     this.mapNotLoaded = ko.observable(false);
+
     this.locationsList = ko.observableArray([]);
     // add location objects to the locationsList
-    locations.forEach(function(item){
-      self.locationsList.push(new Location(item))
+    locations.forEach(function(location){
+      self.locationsList.push(new Location(location))
     });
-    // fit map to new bounds
+    // fit map to bounds
     map.fitBounds(map.bounds);
 
-    //set currentLocation
+    //set currentLocation default 0
     this.currentLocation = ko.observable(locationsList()[0]);
 
-    // initialize searchTerm which is used to filter the list of locations displayed
+    // initialize searchTerm
     this.searchTerm = ko.observable('');
 
-    // this function is used to reset any active state that may be set
+    // this function is used to reset
     this.resetActiveState = function() {
         self.currentLocation().active(false);
         self.currentLocation().marker.setAnimation(null);
@@ -198,37 +197,37 @@
       });
     });
 
-    // click handler for when a location is clicked
-    this.selectLocation = function(clickedLocation){
-      if(self.currentLocation() == clickedLocation && self.currentLocation().active === true){
+    // marker触发click时处理
+    this.selectLocation = function(clickedLocation) {
+        if (self.currentLocation() == clickedLocation && self.currentLocation().active() === true) {
+            resetActiveState();
+            return;
+        }
+
+        // reset any active state
         resetActiveState();
-        return;
-      };
 
-      // reset any active state
-      resetActiveState();
+        // update currentLocation
+        self.currentLocation(clickedLocation);
 
-      // update currentLocation
-      self.currentLocation(clickedLocation);
+        // activate new currentLocation
+        self.currentLocation().active(true);
 
-      self.currentLocation().active(true);
+        // bounce marker
+        self.currentLocation().marker.setAnimation(google.maps.Animation.BOUNCE);
 
-      // bounce marker
-      self.currentLocation().marker.setAnimation(google.maps.Animation.BOUNCE);
+        // open infoWindow for the current location
+        infoWindow.setContent('<h1>' + self.currentLocation().title() + '</h1>' +  self.currentLocation().getContent(function(callback){
+            // a call back function passed to Location.getContent()
+            if (self.currentLocation() == callback){
+                infoWindow.setContent('<h1>' + self.currentLocation().title() + '</h1>' + callback.content());
+            }
+        }));
+        console.log(infoWindow);
+        infoWindow.open(map, self.currentLocation().marker);
 
-      infoWindow.setContent('<h1>' + self.currentLocation().title() + '</h1>' + self.currentLocation().getContent(function(l){
-             // This is a call back function passed to Location.getContent()
-             // When Location has finished getting info from external API it will call this function
-             // check if infoWindow is still open for the location calling this call back function
-            if (self.currentLocation() == l){
-                 infoWindow.setContent('<h1>' + self.currentLocation().title() + '</h1>' + l.content());
-             }
-         }));
-         infoWindow.open(map, self.currentLocation().marker);
-
-      // center map on current marker
-      map.panTo(self.currentLocation().marker.position);
-
+        // center map on current marker
+        map.panTo(self.currentLocation().marker.position);
     };
     // hide nav initially on mobile
     this.hideNav = ko.observable( window.innerWidth < 640 );
