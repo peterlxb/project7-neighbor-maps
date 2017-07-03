@@ -67,7 +67,7 @@
       // ajax callback
       self.getContent = function(callback){
         if(self.content){
-          return self.content;
+          return self.content();
         }
 
         var wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + self.title() + '&format=json&callback=wikiCallback';
